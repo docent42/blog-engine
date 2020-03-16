@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet author="esv" id="2020-03-08-create-table-post2tag">
+		<createTable tableName="post2tag">
+			<column name="post_id" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="tag_id" type="INT">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="esv" id="2020-03-08-addPrimaryKey">
+		<addPrimaryKey 
+            columnNames="post_id, tag_id"
+            constraintName="pk_post2tag"
+            tableName="post2tag"
+            validate="true"/>
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<include file="2020-03-08-create-table-blog_user.xml" relativeToChangelogFile="true"/>
+	<include file="2020-03-08-create-table-captcha_code.xml" relativeToChangelogFile="true"/>
+	<include file="2020-03-08-create-table-global_setting.xml" relativeToChangelogFile="true"/>
+	<include file="2020-03-08-create-table-post.xml" relativeToChangelogFile="true"/>
+	<include file="2020-03-08-create-table-post_comment.xml" relativeToChangelogFile="true"/>
+	<include file="2020-03-08-create-table-post_vote.xml" relativeToChangelogFile="true"/>
+	<include file="2020-03-08-create-table-post2tag.xml" relativeToChangelogFile="true"/>
+	<include file="2020-03-08-create-table-tag.xml" relativeToChangelogFile="true"/>
+	<include file="2020-03-08-add-index-foreign-key.xml" relativeToChangelogFile="true"/>
+	
+</databaseChangeLog>

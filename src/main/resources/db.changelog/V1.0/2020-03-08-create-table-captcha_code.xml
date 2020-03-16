@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet author="esv" id="2020-03-08-create-table-captcha_code">
+		<createTable tableName="captcha_code">
+			<column name="id" type="INT" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="code" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="secret_code" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="time" type="TIMESTAMP">
+				<constraints nullable="false"/>
+			</column>			
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

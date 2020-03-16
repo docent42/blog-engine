@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog 	xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
+					xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" 
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+					xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+	
+	<changeSet author="esv" id="post-createIndexes">
+        <createIndex indexName="fk_post_moderator_id" tableName="post">
+            <column name="moderator_id"/>
+        </createIndex>
+		<createIndex indexName="fk_post_user_id" tableName="post">
+            <column name="user_id"/>
+        </createIndex>
+		<comment>post table</comment>
+    </changeSet>
+	
+    <changeSet author="esv" id="post-fk-1">
+        <addForeignKeyConstraint baseColumnNames="moderator_id" 
+								baseTableName="post" 
+								constraintName="fk_post_moderator_id" 
+								onDelete="NO ACTION" 
+								onUpdate="NO ACTION" 
+								referencedColumnNames="id" 
+								referencedTableName="blog_user"/>
+	</changeSet>							
+	<changeSet author="esv" id="post-fk-2">
+        <addForeignKeyConstraint baseColumnNames="user_id" 
+								baseTableName="post" 
+								constraintName="fk_post_user_id" 
+								onDelete="NO ACTION" 
+								onUpdate="NO ACTION" 
+								referencedColumnNames="id" 
+								referencedTableName="blog_user"/>
+	</changeSet>							
+	
+	<changeSet author="esv" id="post_comment-createIndexes">
+        <createIndex indexName="fk_post_comment_post_id" tableName="post_comment">
+            <column name="post_id"/>
+        </createIndex>
+		<createIndex indexName="fk_post_comment_parent_id" tableName="post_comment">
+            <column name="parent_id"/>
+        </createIndex>
+		<createIndex indexName="fk_post_comment_user_id" tableName="post_comment">
+            <column name="user_id"/>
+        </createIndex>
+		<comment>post_comment table</comment>
+    </changeSet>
+	
+    <changeSet author="esv" id="post_comment-fk-1">
+        <addForeignKeyConstraint baseColumnNames="post_id" 
+								baseTableName="post_comment" 
+								constraintName="fk_post_comment_post_id" 
+								onDelete="NO ACTION" 
+								onUpdate="NO ACTION" 
+								referencedColumnNames="id" 
+								referencedTableName="post"/>
+	</changeSet>							
+	<changeSet author="esv" id="post_comment-fk-2">
+        <addForeignKeyConstraint baseColumnNames="parent_id" 
+								baseTableName="post_comment" 
+								constraintName="fk_post_comment_parent_id" 
+								onDelete="NO ACTION" 
+								onUpdate="NO ACTION" 
+								referencedColumnNames="id" 
+								referencedTableName="post_comment"/>
+	</changeSet>							
+	<changeSet author="esv" id="post_comment-fk-3">
+        <addForeignKeyConstraint baseColumnNames="user_id" 
+								baseTableName="post_comment" 
+								constraintName="fk_post_comment_user_id" 
+								onDelete="NO ACTION" 
+								onUpdate="NO ACTION" 
+								referencedColumnNames="id" 
+								referencedTableName="blog_user"/>								
+    </changeSet>
+	
+	<changeSet author="esv" id="post_vote-createIndexes">
+        <createIndex indexName="fk_post_vote_post_id" tableName="post_vote">
+            <column name="post_id"/>
+        </createIndex>
+		<createIndex indexName="fk_post_vote_user_id" tableName="post_vote">
+            <column name="user_id"/>
+        </createIndex>
+		<comment>post_vote table</comment>
+    </changeSet>
+	
+	<changeSet author="esv" id="post_vote-fk-1">
+        <addForeignKeyConstraint baseColumnNames="post_id" 
+								baseTableName="post_vote" 
+								constraintName="fk_post_vote_post_id" 
+								onDelete="NO ACTION" 
+								onUpdate="NO ACTION" 
+								referencedColumnNames="id" 
+								referencedTableName="post"/>
+	</changeSet>							
+	<changeSet author="esv" id="post_vote-fk-2">
+        <addForeignKeyConstraint baseColumnNames="user_id" 
+								baseTableName="post_vote" 
+								constraintName="fk_post_vote_user_id" 
+								onDelete="NO ACTION" 
+								onUpdate="NO ACTION" 
+								referencedColumnNames="id" 
+								referencedTableName="blog_user"/>								
+    </changeSet>
+	
+	<changeSet author="esv" id="post2tag-createIndexes">
+        <createIndex indexName="fk_post2tag_post_id" tableName="post2tag">
+            <column name="post_id"/>
+        </createIndex>
+		<createIndex indexName="fk_post2tag_tag_id" tableName="post2tag">
+            <column name="tag_id"/>
+        </createIndex>
+		<comment>post2tag table</comment>
+    </changeSet>
+	
+	<changeSet author="esv" id="post2tag-fk-1">
+        <addForeignKeyConstraint baseColumnNames="post_id" 
+								baseTableName="post2tag" 
+								constraintName="fk_post2tag_post_id" 
+								onDelete="NO ACTION" 
+								onUpdate="NO ACTION" 
+								referencedColumnNames="id" 
+								referencedTableName="post"/>
+	</changeSet>							
+	<changeSet author="esv" id="post2tag-fk-2">
+        <addForeignKeyConstraint baseColumnNames="tag_id" 
+								baseTableName="post2tag" 
+								constraintName="fk_post2tag_dst_tag_id" 
+								onDelete="NO ACTION" 
+								onUpdate="NO ACTION" 
+								referencedColumnNames="id" 
+								referencedTableName="tag"/>								
+    </changeSet>
+	<changeSet author="esv" id="addUniqueConstraint-tag-table">
+		<addUniqueConstraint columnNames="name"
+							 constraintName="const_name"
+							 tableName="tag"/>
+	</changeSet>
+</databaseChangeLog>	
