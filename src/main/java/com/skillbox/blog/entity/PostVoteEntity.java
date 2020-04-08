@@ -1,5 +1,7 @@
 package com.skillbox.blog.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -10,12 +12,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@Builder
 @Table(name = "post_vote")
+@AllArgsConstructor
+@NoArgsConstructor
 public class PostVoteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

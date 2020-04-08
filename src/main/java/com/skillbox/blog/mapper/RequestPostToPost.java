@@ -12,5 +12,10 @@ public interface RequestPostToPost {
     @Mapping(target = "time", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "moderationStatus", expression = "java(com.skillbox.blog.entity.enums.ModerationStatus.NEW)")
     @Mapping(target = "viewCount", expression = "java(0)")
-    Post map(RequestPost requestPost);
+    Post mapNew(RequestPost requestPost);
+
+    @Mapping(target = "isActive", source = "active")
+    @Mapping(target = "time", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "moderationStatus", expression = "java(com.skillbox.blog.entity.enums.ModerationStatus.NEW)")
+    Post mapEdit(RequestPost requestPost);
 }

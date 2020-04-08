@@ -15,7 +15,7 @@ import java.util.HashMap;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class ResponseRegisterDto {
-   boolean result;
-   @JsonInclude(JsonInclude.Include.NON_NULL)
-   HashMap<String, String> errors;
+    boolean result;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    HashMap<String, String> errors;
 }

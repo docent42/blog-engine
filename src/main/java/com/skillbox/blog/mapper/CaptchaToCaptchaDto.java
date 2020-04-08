@@ -10,5 +10,5 @@ public interface CaptchaToCaptchaDto {
 
     @Mapping(source = "code", target = "secret")
     @Mapping(source = "secretCode", target = "image")
-    ResponseCaptchaDto map (CaptchaCode captchaCode);
+    ResponseCaptchaDto map(CaptchaCode captchaCode);
 }

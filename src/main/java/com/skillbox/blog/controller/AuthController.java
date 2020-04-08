@@ -1,26 +1,25 @@
 package com.skillbox.blog.controller;
 
-import com.skillbox.blog.dto.request.RequestLoginDto;
 import com.skillbox.blog.dto.request.RequestPasswordDto;
+import com.skillbox.blog.dto.request.RequestPwdRestoreDto;
 import com.skillbox.blog.dto.request.RequestUserDto;
 import com.skillbox.blog.dto.response.ResponseCaptchaDto;
-import com.skillbox.blog.dto.response.ResponseLogOutDto;
 import com.skillbox.blog.dto.response.ResponseLoginDto;
+import com.skillbox.blog.dto.response.ResponsePasswordDto;
 import com.skillbox.blog.dto.response.ResponseRegisterDto;
-import com.skillbox.blog.dto.response.ResponseUserDto;
 import com.skillbox.blog.service.AuthService;
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
 
 @RestController
 @AllArgsConstructor
@@ -41,28 +40,23 @@ public class AuthController {
         return authService.genAndSaveCaptcha();
     }
 
-    @PostMapping("/login")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseLoginDto login(HttpServletRequest request, @RequestBody RequestLoginDto requestLoginDto) {
-        return authService.loginUser(request, requestLoginDto);
-    }
-
-    @GetMapping("/logout")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseLogOutDto logOut(HttpServletRequest request) {
-        return authService.closedSession(request);
-    }
-
     @GetMapping("/check")
     @ResponseStatus(HttpStatus.OK)
     public ResponseLoginDto check(HttpServletRequest request) {
         return authService.checkAuth(request);
     }
 
+    @PostMapping("/restore")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponsePasswordDto restorePassword(@Valid @RequestBody RequestPwdRestoreDto dto,
+        @RequestHeader String host){
+        return authService.restorePassword(dto, host);
+    }
+
     @PostMapping("/password")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseUserDto restorePassword(@Valid @RequestBody RequestPasswordDto passwordRequestDto){
-        return null;
+    public ResponsePasswordDto changePassword(@Valid @RequestBody RequestPasswordDto dto) {
+        return authService.changePassword(dto);
     }
 
 }

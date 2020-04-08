@@ -16,9 +16,9 @@ public class RequestPost {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime time;
     private byte active;
-    @Size(min = 10, message = "Заголовок не установлен")
+    @Size(max = 256, message = "Заголовок не установлен")
     private String title;
-    @Size(min = 100, message = "Текст публикации слишком короткий")
+    @Size(min = 50, message = "Текст публикации слишком короткий")
     private String text;
     private String tags;
 }

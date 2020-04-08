@@ -15,8 +15,8 @@ public class RequestUserDto {
 
     @Email
     private String email;
-    @NotBlank(message = "name must be not null")
-    private String name;
+//    @NotBlank(message = "name must be not null")
+//    private String name;
     @Size(min = 6)
     private String password;
     @Size(min = 6)

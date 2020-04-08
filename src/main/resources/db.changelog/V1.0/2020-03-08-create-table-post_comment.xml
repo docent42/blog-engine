@@ -20,7 +20,7 @@
 				<constraints nullable="false"/>
 			</column>
 			<column name="user_id" type="INT">
-				<constraints nullable="false"/>
+				<constraints nullable="true"/>
 			</column>
 		</createTable>
 	</changeSet>

@@ -13,6 +13,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "global_setting")
 public class GlobalSetting {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -24,5 +25,5 @@ public class GlobalSetting {
     private String name;
 
     @Column(nullable = false)
-    private String value;
+    private boolean value;
 }

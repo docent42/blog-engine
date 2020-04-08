@@ -1,0 +1,4 @@
+globalsettings:
+  multiuser: true
+  premoderpost: true
+  publicstats: true

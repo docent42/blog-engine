@@ -1,9 +1,42 @@
 server:
   port: 8080
 
+globalsettings:
+  multiuser: false
+  premoderpost: false
+  publicstats: false
+
 spring:
+  output:
+    ansi:
+      enabled: ALWAYS
   profiles:
     active: default
+
+#  security:
+#    basic:
+#      enabled: false
+#  management:
+#    security:
+#      enabled: false
+
+  mail:
+#    host: host
+#    port: port
+#    username: username
+#    password: pwd
+    host: lifo.ml
+    port: 587
+    username: mailer@lifo.ml
+    password: mailerpwd.1Q
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL94Dialect
     show-sql: true
@@ -16,6 +49,14 @@ spring:
         show-sql: true
         format-sql: true
         use_sql_comments: true
+
+  http:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: -1
+      file-size-threshold: 100KB
+      enabled: true
+      location: ${java.io.tmpdir}
 
   datasource:
     driverClassName: com.p6spy.engine.spy.P6SpyDriver
@@ -33,3 +74,10 @@ spring:
     serialization:
       FAIL_ON_EMPTY_BEANS: false #отсутствие свойств не приводит к ошибке
     default-property-inclusion: NON_NULL #не сериализовывать null поля
+
+  liquibase:
+    enabled: false
+    change-log: classpath:database_changelog.xml
+    url: jdbc:postgresql://localhost:5432/sklbx?currentSchema=be
+    user: postgres
+    password: 1234

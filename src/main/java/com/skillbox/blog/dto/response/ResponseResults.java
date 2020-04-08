@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResponseResults<T> {
 
-    boolean result;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    T errors;
+    private T id;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean result;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private T errors;
 }

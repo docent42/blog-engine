@@ -17,7 +17,7 @@
 			<column name="name" type="VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="value" type="VARCHAR(255)">
+			<column name="value" type="BOOLEAN">
 				<constraints nullable="false"/>
 			</column>
 		</createTable>
