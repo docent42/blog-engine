@@ -1,10 +1,20 @@
 server:
   port: 8080
 
-globalsettings:
-  multiuser: false
-  premoderpost: false
-  publicstats: false
+global-settings:
+  globalSettings:
+    -
+      code: 'MULTIUSER_MODE'
+      name: 'Многопользовательский режим'
+      value: 'no'
+    -
+      code: 'POST_PREMODERATION'
+      name: 'Премодерация постов'
+      value: 'yes'
+    -
+      code: 'STATISTICS_IS_PUBLIC'
+      name: 'Показывать всем статистику блога'
+      value: 'no'
 
 spring:
   output:
@@ -21,14 +31,10 @@ spring:
 #      enabled: false
 
   mail:
-#    host: host
-#    port: port
-#    username: username
-#    password: pwd
-    host: lifo.ml
+    host: host
     port: 587
-    username: mailer@lifo.ml
-    password: mailerpwd.1Q
+    username: username
+    password: pwd
     properties:
       mail:
         smtp:

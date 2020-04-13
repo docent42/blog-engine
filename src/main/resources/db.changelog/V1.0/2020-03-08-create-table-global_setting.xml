@@ -6,7 +6,7 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-	<changeSet author="esv" id="2020-03-08-create-table-global_setting">
+	<changeSet author="esv" id="2020-04-11-create-table-global_setting">
 		<createTable tableName="global_setting">
 			<column name="id" type="INT" autoIncrement="true">
 				<constraints nullable="false" primaryKey="true"/>
@@ -17,7 +17,7 @@
 			<column name="name" type="VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="value" type="BOOLEAN">
+			<column name="value" type="VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
 		</createTable>

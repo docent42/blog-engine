@@ -8,8 +8,9 @@ import lombok.experimental.Accessors;
 @Builder
 @Accessors(chain = true)
 public class RequestPasswordDto {
-    String code;
-    String password;
-    String captcha;
-    String captcha_secret;
+
+  String code;
+  String password;
+  String captcha;
+  String captcha_secret;
 }

@@ -1,6 +1,5 @@
 package com.skillbox.blog.service;
 
-import com.skillbox.blog.dto.request.RequestCommentDto;
 import com.skillbox.blog.dto.request.RequestLikeDislikeDto;
 import com.skillbox.blog.dto.request.RequestPost;
 import com.skillbox.blog.dto.response.PartComment;
@@ -8,14 +7,9 @@ import com.skillbox.blog.dto.response.PartInfoOfPosts;
 import com.skillbox.blog.dto.response.PartInfoOfUser;
 import com.skillbox.blog.dto.response.ResponseAllPostsDto;
 import com.skillbox.blog.dto.response.ResponseOnePostDto;
-import com.skillbox.blog.dto.response.ResponsePostDto;
 import com.skillbox.blog.dto.response.ResponseResults;
-import com.skillbox.blog.dto.response.ResponseTagsDto;
-import com.skillbox.blog.dto.response.TagDto;
-import com.skillbox.blog.dto.response.errors.ErrorResponse;
 import com.skillbox.blog.dto.response.temporary.TemporaryComment;
 import com.skillbox.blog.entity.Post;
-import com.skillbox.blog.entity.PostComment;
 import com.skillbox.blog.entity.PostVoteEntity;
 import com.skillbox.blog.entity.Tag;
 import com.skillbox.blog.entity.User;
@@ -37,6 +31,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,140 +44,65 @@ public class PostService {
   PostRepository postRepository;
   TagRepository tagRepository;
   UserRepository userRepository;
-  PostCommentRepository commentRepository;
   RequestPostToPost requestMapper;
   UserService userService;
   PostVoteRepository postVoteRepository;
   PostCommentRepository postCommentRepository;
 
-  public ResponseResults<ErrorResponse> createPost(RequestPost post) {
-
-    Post postToSave = requestMapper.mapNew(post);
-    postToSave.setUserId(userService.getCurrentUser());
-    postToSave.setModeratorId(userService.getModerator());
-    postToSave.setTagList(updateTags(post.getTags()));
-
-    postRepository.save(postToSave);
-
-    return new ResponseResults<>(null, true, null);
-  }
-
-  public ResponseResults<Integer> createComment(RequestCommentDto comment) {
-
-    PostComment commentToSave = new PostComment();
-    Post post = postRepository.findById(comment.getPostId())
-        .orElseThrow(EntityNotFoundException::new);
-    commentToSave.setPostId(post);
-    commentToSave.setTime(LocalDateTime.now());
-    commentToSave.setText(comment.getText());
-    commentToSave.setUserId(userService.getCurrentUser());
-
-    if (comment.getParentId() != 0) {
-      PostComment parent = commentRepository.findById(comment.getParentId())
-          .orElseThrow(EntityNotFoundException::new);
-      commentToSave.setParentId(parent);
-    }
-    return new ResponseResults<>(commentRepository.save(commentToSave).getId(), null, null);
-  }
-
-  public ResponseResults<Boolean> editPost(RequestPost editPost, int postId) {
-
-    Post oldPost = getPostById(postId);
-    Post postToSave = requestMapper.mapEdit(editPost);
-    postToSave.setUserId(oldPost.getUserId());
-    postToSave.setModeratorId(oldPost.getModeratorId());
-
-    if (userService.isModerator()) {
-      postToSave.setModerationStatus(oldPost.getModerationStatus());
-    }
-    postToSave.setTagList(updateTags(editPost.getTags()));// update tags
-
-    postRepository.save(postToSave);
-
-    return new ResponseResults<>(null, true, null);
-  }
-
-  public ResponseTagsDto getTags(String query) {
-
-    List<Tag> resultList;
-
-    if (query.isEmpty()) {
-      resultList = tagRepository.findAll();
-    } else {
-      resultList = tagRepository.findAllByNameContaining(query);
-    }
-
-    List<TagDto> responseTags = resultList.stream()
-        .map(tag -> {
-          String name = tag.getName();
-          float weight =
-              (float) tagRepository.findTagLinks(tag.getId()) / postRepository.postCountTotal();
-          return new TagDto(name, weight);
-        })
-        .collect(Collectors.toList());
-    return new ResponseTagsDto(responseTags);
-  }
-
-  private List<Tag> updateTags(String tagsStr) {
-
-    List<String> tags = Arrays.asList(tagsStr.trim()
-        .toLowerCase()
-        .split(","));
-
-    List<Tag> existTagList = tagRepository.findAllByNameIn(tags);
-
-    List<String> existTagListNames = existTagList.stream()
-        .map(Tag::getName)
-        .collect(Collectors.toList());
-
-    List<Tag> newTagList = tags.stream().filter(tag -> !existTagListNames.contains(tag))
-        .map(Tag::new)
-        .collect(Collectors.toList());
-    if (!newTagList.isEmpty()) {
-
-      newTagList = tagRepository.saveAll(newTagList);
-      existTagList.addAll(newTagList);
-    }
-
-    return existTagList;
-  }
-
-  private Post getPostById(int postId) {
-
-    return postRepository.findById(postId)
-        .orElseThrow(() -> new EntityNotFoundException("Post not found !"));
-  }
-
-  @Transactional(readOnly = true)
-  public ResponseAllPostsDto getPosts(String mode) {
+  public ResponseAllPostsDto getPosts(int offset, int limit, String mode) {
     int count = postRepository.findCountPosts();
     PostService.SORT sortMode = PostService.SORT.valueOf(mode.toUpperCase());
 
-    List<Post> posts = postRepository.findSuitablePosts();
-
+    Pageable pageable = PageRequest.of(offset / limit, limit);
+    List<Post> posts = postRepository.findSuitablePosts(pageable);
     List<PartInfoOfPosts> result = postConversion(posts);
-
     sortList(result, sortMode);
 
+    posts.forEach(p -> p.setViewCount(p.getViewCount() + 1));
     return new ResponseAllPostsDto().builder()
         .count(count)
         .posts(result)
         .build();
   }
 
-  @Transactional(readOnly = true)
+  public ResponseAllPostsDto searchPosts(int offset, int limit, String query) {
+    if (query.equals("")) {
+      return getPosts(offset, limit, "best");
+    } else {
+      int count = postRepository.findCountPosts();
+
+      if (count == 0) {
+        throw new EntityNotFoundException("Post / Comment not exist ");
+      }
+
+      Pageable pageable = PageRequest.of(offset / limit, limit);
+      List<Post> posts = postRepository.findAllPostsByQuery(query, pageable);
+
+      if (posts.isEmpty()) {
+        throw new EntityNotFoundException("Post / Comment not exist ");
+      }
+
+      posts.forEach(p -> p.setViewCount(p.getViewCount() + 1));
+      return ResponseAllPostsDto.builder()
+          .count(count)
+          .posts(postConversion(posts))
+          .build();
+    }
+  }
+
   public ResponseOnePostDto getPost(int postId) {
-    Post post = getPostById(postId);
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new EntityNotFoundException("Post not found !"));
+
     User user = userRepository.findById(post.getUserId().getId());
+    post.setViewCount(post.getViewCount() + 1);
 
     PartInfoOfUser partInfoOfUser = PartInfoOfUser.builder()
         .id(user.getId())
         .name(user.getName())
         .build();
 
-    Post crutch = postRepository.findById(postId).get();
-    List<TemporaryComment> temporaryComments = postCommentRepository.findListByPostId(crutch);
-
+    List<TemporaryComment> temporaryComments = postCommentRepository.findListByPostId(post);
     List<PartComment> comments = new ArrayList<>();
 
     for (TemporaryComment temporaryComment : temporaryComments) {
@@ -212,42 +133,44 @@ public class PostService {
         .text(post.getText())
         .likeCount(postVoteRepository.findCountOfLikesById(postId))
         .dislikeCount(postVoteRepository.findCountOfDislikesById(postId))
-        .viewCount(postCommentRepository.findCountOfCommentsByPostId(postId))
+        .viewCount(postRepository.findViewCountByPostId(postId))
         .comments(comments)
         .tags(tags)
         .build();
   }
 
-  @Transactional(readOnly = true)
-  public ResponseAllPostsDto searchPosts(String query) {
-    if (query.equals("")) {
-      return getPosts("best");
-    } else {
-      int count = postRepository.findCountPosts();
+  public ResponseAllPostsDto getPostsByDate(int offset, int limit, String date) {
+    int count = postRepository.findCountPosts();
 
-      if (count == 0) {
-        throw new EntityNotFoundException("Post / Comment not exist ");
-      }
+    Pageable pageable = PageRequest.of(offset / limit, limit);
+    List<Post> posts = postRepository.findByDate(date, pageable);
+    List<PartInfoOfPosts> result = postConversion(posts);
+    posts.forEach(p -> p.setViewCount(p.getViewCount() + 1));
 
-      List<Post> posts = postRepository.findAllPosts();
-
-      posts.removeIf(post -> !post.getText().contains(query));
-
-      if (posts.isEmpty()) {
-        throw new EntityNotFoundException("Post / Comment not exist ");
-      }
-
-      return ResponseAllPostsDto.builder()
-          .count(count)
-          .posts(postConversion(posts))
-          .build();
-    }
+    return ResponseAllPostsDto.builder()
+        .count(count)
+        .posts(result)
+        .build();
   }
 
-  @Transactional(readOnly = true)
+  public ResponseAllPostsDto getPostsByTag(int offset, int limit, String tag) {
+    int count = postRepository.findCountPosts();
+
+    Pageable pageable = PageRequest.of(offset / limit, limit);
+    List<Post> posts = postRepository.findAllByTag(tag, pageable);
+    List<PartInfoOfPosts> result = postConversion(posts);
+    posts.forEach(p -> p.setViewCount(p.getViewCount() + 1));
+
+    return ResponseAllPostsDto.builder()
+        .count(count)
+        .posts(result)
+        .build();
+  }
+
   public ResponseAllPostsDto getModerationList(String status) {
     int moderatorId = userService.getCurrentUser().getId();
-    int count = postRepository.findCountPostsForModerationByStatus(moderatorId, status.toUpperCase());
+    int count = postRepository
+        .findCountPostsForModerationByStatus(moderatorId, status.toUpperCase());
 
     List<Post> postsForModeration = postRepository
         .findPostsForModerationByStatus(moderatorId, status.toUpperCase());
@@ -281,61 +204,55 @@ public class PostService {
       posts.add(partInfoOfPosts);
     }
 
+    posts.forEach(p -> p.setViewCount(p.getViewCount() + 1));
     return ResponseAllPostsDto.builder()
         .count(count)
         .posts(posts)
         .build();
   }
 
-  @Transactional(readOnly = true)
-  public ResponseAllPostsDto getPostsByDate(String date) {
-    int count = postRepository.findCountPosts();
-
-    List<Post> posts = postRepository.findByDate(date);
-    List<PartInfoOfPosts> result = postConversion(posts);
-
-    return ResponseAllPostsDto.builder()
-        .count(count)
-        .posts(result)
-        .build();
-  }
-
-  @Transactional(readOnly = true)
-  public ResponseAllPostsDto getPostsByTag(String tag) {
-
-  List<Post> linkedPosts = postRepository.findAllByTag(tag);
-
-    return new ResponseAllPostsDto(linkedPosts.size(),postConversion(linkedPosts));
-  }
-
-  @Transactional(readOnly = true)
-  public ResponseAllPostsDto getMyPosts(String status) {
-
+  public ResponseAllPostsDto getMyPosts(int offset, int limit, String status) {
+    Pageable pageable = PageRequest.of(offset / limit, limit);
     String moderationStatus = "%";
     int isActive = 0;
     int userId = userService.getCurrentUser().getId();
-    if (!status.equals("inactive")) isActive = 1;
+    if (!status.equals("inactive")) {
+      isActive = 1;
+    }
 
     switch (status) {
-      case ("pending") : {
-          moderationStatus = "NEW";
-          break;
+      case ("pending"): {
+        moderationStatus = "NEW";
+        break;
       }
-      case ("declined") : {
+      case ("declined"): {
         moderationStatus = "DECLINED";
         break;
       }
-      case ("published") : {
-        moderationStatus = "ACCEPT";
+      case ("published"): {
+        moderationStatus = "ACCEPTED";
       }
     }
-    List<Post> myPosts = postRepository.findMyPosts(userId,isActive,moderationStatus);
 
-    return new ResponseAllPostsDto(myPosts.size(),postConversion(myPosts));
+    List<Post> myPosts = postRepository.findMyPosts(userId, isActive, moderationStatus, pageable);
+    myPosts.forEach(p -> p.setViewCount(p.getViewCount() + 1));
+    return ResponseAllPostsDto.builder()
+        .count(myPosts.size())
+        .posts(postConversion(myPosts))
+        .build();
   }
 
-  @Transactional(readOnly = true)
-  public ResponsePostDto like(RequestLikeDislikeDto requestLikeDislikeDto) {
+  public ResponseResults<Boolean> createPost(RequestPost post) {
+    Post postToSave = requestMapper.mapNew(post);
+    postToSave.setUserId(userService.getCurrentUser());
+    postToSave.setModeratorId(userService.getModerator());
+    postToSave.setTagList(updateTags(post.getTags()));
+
+    postRepository.save(postToSave);
+    return new ResponseResults<Boolean>().setResult(true);
+  }
+
+  public ResponseResults<Boolean> like(RequestLikeDislikeDto requestLikeDislikeDto) {
     if (postRepository.findById(requestLikeDislikeDto.getPostId()).isPresent()) {
       User currentUser = userService.getCurrentUser();
       Optional<Integer> result = postVoteRepository
@@ -343,15 +260,15 @@ public class PostService {
 
       if (result.isEmpty()) {
         createAndSaveLike(currentUser, requestLikeDislikeDto);
-        return new ResponsePostDto(true);
+        return new ResponseResults<Boolean>().setResult(true);
 
       } else if (result.get() == -1) {
         deleteDislike(currentUser, requestLikeDislikeDto);
         createAndSaveLike(currentUser, requestLikeDislikeDto);
-        return new ResponsePostDto(true);
+        return new ResponseResults<Boolean>().setResult(true);
 
       } else if (result.get() == 1) {
-        return new ResponsePostDto(false);
+        return new ResponseResults<Boolean>().setResult(false);
       } else {
         throw new IllegalValueException("Only 1 or -1.");
       }
@@ -360,8 +277,7 @@ public class PostService {
     }
   }
 
-  @Transactional(readOnly = true)
-  public ResponsePostDto dislike(RequestLikeDislikeDto requestLikeDislikeDto) {
+  public ResponseResults<Boolean> dislike(RequestLikeDislikeDto requestLikeDislikeDto) {
     if (postRepository.findById(requestLikeDislikeDto.getPostId()).isPresent()) {
       User currentUser = userService.getCurrentUser();
       Optional<Integer> result = postVoteRepository
@@ -369,21 +285,49 @@ public class PostService {
 
       if (result.isEmpty()) {
         createAndSaveDislike(currentUser, requestLikeDislikeDto);
-        return new ResponsePostDto(true);
+        return new ResponseResults<Boolean>().setResult(true);
 
       } else if (result.get() == 1) {
         deleteLike(currentUser, requestLikeDislikeDto);
         createAndSaveDislike(currentUser, requestLikeDislikeDto);
-        return new ResponsePostDto(true);
+        return new ResponseResults<Boolean>().setResult(true);
 
       } else if (result.get() == -1) {
-        return new ResponsePostDto(false);
+        return new ResponseResults<Boolean>().setResult(false);
       } else {
         throw new IllegalValueException("Only 1 or -1.");
       }
     } else {
       throw new EntityNotFoundException("Post / Comment not exist ");
     }
+  }
+
+  List<Tag> updateTags(String tagsStr) {
+    List<String> tags = Arrays.asList(tagsStr.trim()
+        .toLowerCase()
+        .split(","));
+
+    List<Tag> existTagList = tagRepository.findAllByNameIn(tags);
+
+    List<String> existTagListNames = existTagList.stream()
+        .map(Tag::getName)
+        .collect(Collectors.toList());
+
+    List<Tag> newTagList = tags.stream().filter(tag -> !existTagListNames.contains(tag))
+        .map(Tag::new)
+        .collect(Collectors.toList());
+
+    if (!newTagList.isEmpty()) {
+
+      newTagList = tagRepository.saveAll(newTagList);
+      existTagList.addAll(newTagList);
+    }
+    return existTagList;
+  }
+
+  Post getPostById(int postId) {
+    return postRepository.findById(postId)
+        .orElseThrow(() -> new EntityNotFoundException("Post not found !"));
   }
 
   private void deleteDislike(User currentUser, RequestLikeDislikeDto requestLikeDislikeDto) {
@@ -443,8 +387,7 @@ public class PostService {
   }
 
   private String dateMapping(LocalDateTime date) {
-    DateTimeFormatter standardFormatter = DateTimeFormatter
-        .ofPattern("dd.MM.yyyy HH:mm"); //прибраться
+    DateTimeFormatter standardFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     DateTimeFormatter formattingToday = DateTimeFormatter.ofPattern("Сегодня, HH:mm");
     DateTimeFormatter formattingYesterday = DateTimeFormatter.ofPattern("Вчера, HH:mm");
 

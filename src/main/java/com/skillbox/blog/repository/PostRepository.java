@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeSet;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -18,13 +19,13 @@ public interface PostRepository extends JpaRepository<Post, Integer>,
   @Query(nativeQuery = true, value = "SELECT DATE(time) FROM be.post WHERE time <= NOW()")
   ArrayList<String> findCountPublicationsOnDateByYear(int year);
 
-  @Query(nativeQuery = true, value = "SELECT EXTRACT(YEAR FROM time) FROM be.post"
-      + "WHERE time <= NOW() and WHERE is_active = 1 and moderation_status = 'ACCEPT'")
+  @Query(nativeQuery = true, value = "SELECT EXTRACT(YEAR FROM time) FROM be.post "
+      + "WHERE time <= NOW() AND is_active = 1 and moderation_status = 'ACCEPTED'")
   TreeSet<Integer> findYearsWherePublicationsPresent();
 
   Optional<Post> findById(int id);
 
-  @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM be.post p ")
+  @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM be.post p")
   int findCountPosts();
 
   @Query(nativeQuery = true, value = "SELECT SUM(view_count) FROM be.post p")
@@ -44,21 +45,17 @@ public interface PostRepository extends JpaRepository<Post, Integer>,
       + "WHERE user_id = :userId")
   LocalDateTime findFirstPublicationForCurrentUser(int userId);
 
-  @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM be.post p WHERE is_active = 1 and moderation_status = 'ACCEPT'")
+  @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM be.post p WHERE is_active = 1 "
+      + "AND moderation_status = 'ACCEPTED'")
   int postCountTotal();
 
   @Query(nativeQuery = true, value = "SELECT * FROM be.post p WHERE is_active = 1 "
-      + "AND moderation_status = 'ACCEPT' "
-      + "AND time <= NOW()")
-  List<Post> findSuitablePosts();
+      + "AND moderation_status = 'ACCEPTED' AND time <= NOW()")
+  List<Post> findSuitablePosts(Pageable pageable);
 
   @Query(nativeQuery = true, value = "SELECT * FROM be.post WHERE is_active = 1 "
-      + "AND moderation_status = 'ACCEPT' AND time \\:\\:DATE = :date \\:\\:DATE")
-  List<Post> findByDate(String date);
-
-  @Query(nativeQuery = true, value = "SELECT * FROM be.post WHERE is_active = 1 "
-      + "AND moderation_status = 'ACCEPT'")
-  List<Post> findAllPosts();
+      + "AND moderation_status = 'ACCEPTED' AND time \\:\\:DATE = :date \\:\\:DATE")
+  List<Post> findByDate(String date, Pageable pageable);
 
   @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM be.post WHERE is_active = 1 "
       + "AND moderation_status = 'NEW' AND moderator_id = :moderatorId")
@@ -72,12 +69,19 @@ public interface PostRepository extends JpaRepository<Post, Integer>,
       + "AND moderation_status = :status AND moderator_id = :moderatorId")
   List<Post> findPostsForModerationByStatus(int moderatorId, String status);
 
-  @Query(nativeQuery = true, value = "select p.* from be.post p join be.post2tag on post_id = p.id " +
-          "join be.tag on tag_id = tag.id where tag.name = :tag " +
-          "and p.is_active = 1 and p.moderation_status = 'ACCEPT';")
-  List<Post> findAllByTag(String tag);
+  @Query(nativeQuery = true, value = "SELECT p.* FROM be.post p "
+      + "JOIN be.post2tag ON post_id = p.id JOIN be.tag ON tag_id = tag.id "
+      + "WHERE tag.name = :tag AND p.is_active = 1 AND p.moderation_status = 'ACCEPTED'")
+  List<Post> findAllByTag(String tag, Pageable pageable);
 
-  @Query(nativeQuery = true, value = "select * from be.post where user_id = :userId and is_active = :isActive " +
-          "and moderation_status LIKE :moderationStatus;")
-  List<Post> findMyPosts(int userId, int isActive, String moderationStatus);
+  @Query(nativeQuery = true, value = "SELECT * FROM be.post WHERE user_id = :userId"
+      + " AND is_active = :isActive AND moderation_status LIKE :moderationStatus")
+  List<Post> findMyPosts(int userId, int isActive, String moderationStatus, Pageable pageable);
+
+  @Query(nativeQuery = true, value = "SELECT * FROM be.post WHERE is_active = 1 "
+      + "AND moderation_status = 'ACCEPTED' AND text LIKE %:query%")
+  List<Post> findAllPostsByQuery(String query, Pageable pageable);
+
+  @Query(nativeQuery = true, value = "SELECT view_count FROM be.post WHERE id = :postId")
+  int findViewCountByPostId(int postId);
 }

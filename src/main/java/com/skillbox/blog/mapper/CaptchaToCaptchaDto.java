@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface CaptchaToCaptchaDto {
 
-    @Mapping(source = "code", target = "secret")
-    @Mapping(source = "secretCode", target = "image")
-    ResponseCaptchaDto map(CaptchaCode captchaCode);
+  @Mapping(source = "code", target = "secret")
+  @Mapping(source = "secretCode", target = "image")
+  ResponseCaptchaDto map(CaptchaCode captchaCode);
 }

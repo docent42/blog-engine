@@ -3,16 +3,16 @@ package com.skillbox.blog.service;
 import com.skillbox.blog.entity.User;
 import com.skillbox.blog.entity.enums.Role;
 import com.skillbox.blog.repository.UserRepository;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -22,9 +22,9 @@ public class UserService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    User user =  userRepository
+    User user = userRepository
         .findByEmail(email)
-        .orElseThrow(() -> new EntityNotFoundException("No user with such email: " + email));
+        .orElseThrow(() -> new UsernameNotFoundException("No user with such email: " + email));
     List<Role> authorities = new ArrayList<>();
     if (user.getIsModerator() == 1) {
       authorities.add(Role.MODERATOR);
@@ -35,14 +35,18 @@ public class UserService implements UserDetailsService {
   }
 
   public User getCurrentUser() {
-    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-    return userRepository.findByEmail(email)
-        .orElseThrow(() -> new EntityNotFoundException("No user with such email: " + email));
+    Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    if (user instanceof User) {
+      return (User) user;
+    } else {
+      throw new AuthenticationCredentialsNotFoundException("Session does not exist");
+    }
+
   }
 
   public User getModerator() {
     return userRepository.findByIsModerator((byte) 1)
-            .orElseThrow(() -> new EntityNotFoundException("Moderator is not defined."));
+        .orElseThrow(() -> new EntityNotFoundException("Moderator is not defined."));
   }
 
   public boolean isModerator() {

@@ -19,7 +19,7 @@ public interface PostCommentRepository extends JpaRepository<PostComment, Intege
   int findCountOfCommentsByPostId(int postId);
 
   @Query(value = "SELECT new com.skillbox.blog.dto.response.temporary"
-          + ".TemporaryComment(c.id, c.time, u.id, u.name, u.photo, c.text) "
-          + "FROM PostComment c JOIN User u ON c.userId = u.id WHERE c.postId = :postId")
+      + ".TemporaryComment(c.id, c.time, u.id, u.name, u.photo, c.text) "
+      + "FROM PostComment c JOIN User u ON c.userId = u.id WHERE c.postId = :postId")
   List<TemporaryComment> findListByPostId(@Param("postId") Post postId);
 }

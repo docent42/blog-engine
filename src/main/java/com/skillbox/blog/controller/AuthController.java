@@ -4,11 +4,10 @@ import com.skillbox.blog.dto.request.RequestPasswordDto;
 import com.skillbox.blog.dto.request.RequestPwdRestoreDto;
 import com.skillbox.blog.dto.request.RequestUserDto;
 import com.skillbox.blog.dto.response.ResponseCaptchaDto;
-import com.skillbox.blog.dto.response.ResponseLoginDto;
-import com.skillbox.blog.dto.response.ResponsePasswordDto;
-import com.skillbox.blog.dto.response.ResponseRegisterDto;
+import com.skillbox.blog.dto.response.ResponseResults;
 import com.skillbox.blog.service.AuthService;
 import java.io.IOException;
+import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -26,37 +25,37 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/auth")
 public class AuthController {
 
-    private AuthService authService;
+  private AuthService authService;
 
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseRegisterDto register(@Valid @RequestBody RequestUserDto user) {
-        return authService.registerNewUser(user);
-    }
+  @PostMapping("/register")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseResults register(@Valid @RequestBody RequestUserDto user) {
+    return authService.registerNewUser(user);
+  }
 
-    @GetMapping("/captcha")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseCaptchaDto genCaptcha() throws IOException {
-        return authService.genAndSaveCaptcha();
-    }
+  @GetMapping("/captcha")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseCaptchaDto genCaptcha() throws IOException {
+    return authService.genAndSaveCaptcha();
+  }
 
-    @GetMapping("/check")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseLoginDto check(HttpServletRequest request) {
-        return authService.checkAuth(request);
-    }
+  @GetMapping("/check")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseResults check(HttpServletRequest request, Principal principal) {
+    return authService.checkAuth(request, principal);
+  }
 
-    @PostMapping("/restore")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponsePasswordDto restorePassword(@Valid @RequestBody RequestPwdRestoreDto dto,
-        @RequestHeader String host){
-        return authService.restorePassword(dto, host);
-    }
+  @PostMapping("/restore")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseResults restorePassword(@Valid @RequestBody RequestPwdRestoreDto dto,
+      @RequestHeader String host) {
+    return authService.restorePassword(dto, host);
+  }
 
-    @PostMapping("/password")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponsePasswordDto changePassword(@Valid @RequestBody RequestPasswordDto dto) {
-        return authService.changePassword(dto);
-    }
+  @PostMapping("/password")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseResults changePassword(@Valid @RequestBody RequestPasswordDto dto) {
+    return authService.changePassword(dto);
+  }
 
 }

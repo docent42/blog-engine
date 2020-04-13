@@ -1,6 +1,7 @@
 package com.skillbox.blog.service;
 
-import com.skillbox.blog.dto.response.ResponsePostDto;
+import com.skillbox.blog.dto.request.RequestModerationDto;
+import com.skillbox.blog.dto.response.ResponseResults;
 import com.skillbox.blog.entity.Post;
 import com.skillbox.blog.entity.enums.ModerationStatus;
 import com.skillbox.blog.repository.PostRepository;
@@ -15,13 +16,14 @@ public class ModerationService {
   @Autowired
   PostRepository postRepository;
 
-  public ResponsePostDto moderationPost(int postId, String decision) {
-    Post post = postRepository.findById(postId).get();
+  public ResponseResults<Boolean> moderationPost(RequestModerationDto requestModerationDto) {
+    Post post = postRepository.findById(requestModerationDto.getPostId()).get();
 
-    ModerationStatus moderationStatus = ModerationStatus.valueOf(decision.toUpperCase());
+    ModerationStatus moderationStatus = ModerationStatus
+        .valueOf(requestModerationDto.getDecision().toUpperCase());
     post.setModerationStatus(moderationStatus);
 
     postRepository.save(post);
-    return new ResponsePostDto(true);
+    return new ResponseResults<Boolean>().setResult(true);
   }
 }

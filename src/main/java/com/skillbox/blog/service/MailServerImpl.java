@@ -5,21 +5,16 @@ import java.io.UnsupportedEncodingException;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service("mailServer")
+@AllArgsConstructor
 public class MailServerImpl implements MailService {
 
-
   private JavaMailSender mailSender;
-
-  @Autowired
-  public MailServerImpl(JavaMailSender mailSender) {
-    this.mailSender = mailSender;
-  }
 
   @Override
   public void sendMail(Mail mail) {

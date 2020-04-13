@@ -10,12 +10,14 @@ public class RouteController {
       "/edit/*",
       "/calendar/*",
       "/my/*",
+      "/login",
       "/login/*",
       "/moderator/*",
       "/moderation/*",
       "/post/*",
       "/posts/*",
       "/profile",
+      "settings",
       "/stat",
       "/404"
   })

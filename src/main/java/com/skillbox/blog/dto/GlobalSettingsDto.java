@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GlobalSettingsDto {
 
-    @JsonProperty("MULTIUSER_MODE")
-    boolean multiuserMode;
+  @JsonProperty("MULTIUSER_MODE")
+  boolean MULTIUSER_MODE;
 
-    @JsonProperty("POST_PREMODERATION")
-    boolean postPremoderation;
+  @JsonProperty("POST_PREMODERATION")
+  boolean POST_PREMODERATION;
 
-    @JsonProperty("STATISTIC_IS_PUBLIC")
-    boolean statisticIsPublic;
+  @JsonProperty("STATISTICS_IS_PUBLIC")
+  boolean STATISTICS_IS_PUBLIC;
 }

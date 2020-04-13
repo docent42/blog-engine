@@ -1,17 +1,15 @@
 package com.skillbox.blog.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-@Accessors(chain = true)
-@Builder
 @Data
-public class ResponseLoginDto {
-    boolean result;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    ResponseUserDto user;
+@Accessors(chain = true)
+public class ResponseLoginDto<T extends Object> extends ResponseResults<Object> {
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  ResponseUserDto user;
 }
 
 

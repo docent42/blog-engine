@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class ResponseCaptchaDto {
-    private String secret;
-    private String image;
+
+  private String secret;
+  private String image;
 }

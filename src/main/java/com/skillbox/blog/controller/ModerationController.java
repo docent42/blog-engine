@@ -1,12 +1,13 @@
 package com.skillbox.blog.controller;
 
-import com.skillbox.blog.dto.response.ResponsePostDto;
+import com.skillbox.blog.dto.request.RequestModerationDto;
+import com.skillbox.blog.dto.response.ResponseResults;
 import com.skillbox.blog.service.ModerationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,8 +20,8 @@ public class ModerationController {
 
   @PostMapping("/moderation")
   @ResponseStatus(HttpStatus.OK)
-  public ResponsePostDto moderationPost(@RequestParam int postId,
-                                        @RequestParam String decision) {
-    return moderationService.moderationPost(postId, decision);
+  public ResponseResults<Boolean> moderationPost(
+      @RequestBody RequestModerationDto requestModerationDto) {
+    return moderationService.moderationPost(requestModerationDto);
   }
 }

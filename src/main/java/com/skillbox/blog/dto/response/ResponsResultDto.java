@@ -1,4 +1,4 @@
-package com.skillbox.blog.dto.response.errors;
+package com.skillbox.blog.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ErrorResponse {
+public class ResponsResultDto {
 
-  String message;
+  boolean result;
 }

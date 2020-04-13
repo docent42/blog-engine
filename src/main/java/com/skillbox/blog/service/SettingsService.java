@@ -1,39 +1,40 @@
 package com.skillbox.blog.service;
 
-import com.skillbox.blog.config.GlobalSettingsConfig;
 import com.skillbox.blog.dto.GlobalSettingsDto;
+import com.skillbox.blog.entity.GlobalSetting;
 import com.skillbox.blog.exception.StatusException;
 import com.skillbox.blog.mapper.GlobalSettingsConfigToDto;
+import com.skillbox.blog.repository.GlobalSettingRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SettingsService {
 
-    @Autowired
-    private GlobalSettingsConfig globalSettingsConfig;
+  @Autowired
+  private GlobalSettingRepository repository;
 
-    @Autowired
-    private UserService userService;
+  @Autowired
+  private UserService userService;
 
-    @Autowired
-    private GlobalSettingsConfigToDto mapper;
+  @Autowired
+  private GlobalSettingsConfigToDto mapper;
 
-    public GlobalSettingsDto getSettings() {
-        if (userService.getCurrentUser().getIsModerator() == 1) {
-            return mapper.map(globalSettingsConfig);
-        }
-        throw new StatusException("But it is for You.");
+  public GlobalSettingsDto getSettings() {
+    if (userService.getCurrentUser().getIsModerator() == 1) {
+      return mapper.map(repository.findAll());
     }
+    throw new StatusException("But it is for You.");
+  }
 
-    public GlobalSettingsDto saveSettings(GlobalSettingsDto request) {
-        if (userService.getCurrentUser().getIsModerator() == 1) {
-            globalSettingsConfig.setMultiuserMode(request.isMultiuserMode());
-            globalSettingsConfig.setPostPremoderation(request.isPostPremoderation());
-            globalSettingsConfig.setStatisticIsPublic(request.isStatisticIsPublic());
-        } else {
-            throw new StatusException("But it is for You.");
-        }
-        return request;
+  public GlobalSettingsDto saveSettings(GlobalSettingsDto dto) {
+    if (userService.getCurrentUser().getIsModerator() == 1) {
+      List<GlobalSetting> settings = repository.findAll();
+      repository.saveAll(mapper.map(dto, settings));
+    } else {
+      throw new StatusException("But it is for You.");
     }
+    return dto;
+  }
 }

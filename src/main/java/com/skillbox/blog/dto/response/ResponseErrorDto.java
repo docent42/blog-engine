@@ -1,19 +1,21 @@
 package com.skillbox.blog.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.HashMap;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 @Data
-@Accessors(chain = true)
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
-public class ResponseResults<T> {
+@Accessors(chain = true)
+public class ResponseErrorDto {
 
+  boolean result;
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  private T id;
-  @JsonInclude(JsonInclude.Include.NON_NULL)
-  private T result;
-  @JsonInclude(JsonInclude.Include.NON_NULL)
-  private T errors;
+  HashMap<String, String> errors;
 }
