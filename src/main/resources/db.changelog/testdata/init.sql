@@ -263,9 +263,9 @@ INSERT INTO be.blog_user (code, e_mail, is_moderator, name, password, photo, reg
 -- Data for Name: global_setting; Type: TABLE DATA; Schema: be; Owner: postgres
 --
 
-INSERT INTO be.global_setting (code, name, value) VALUES ('MULTIUSER_MODE', 'Многопользовательский режим', 'no');
-INSERT INTO be.global_setting (code, name, value) VALUES ('POST_PREMODERATION', 'Премодерация постов', 'yes');
-INSERT INTO be.global_setting (code, name, value) VALUES ('STATISTICS_IS_PUBLIC', 'Показывать всем статистику блога', 'no');
+INSERT INTO be.global_setting (code, name, value) VALUES ('MULTIUSER_MODE', 'Многопользовательский режим', 'NO');
+INSERT INTO be.global_setting (code, name, value) VALUES ('POST_PREMODERATION', 'Премодерация постов', 'YES');
+INSERT INTO be.global_setting (code, name, value) VALUES ('STATISTICS_IS_PUBLIC', 'Показывать всем статистику блога', 'NO');
 
 
 --

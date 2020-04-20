@@ -11,7 +11,7 @@ public class RouteController {
       "/calendar/*",
       "/my/*",
       "/login",
-      "/login/*",
+      "/login/**",
       "/moderator/*",
       "/moderation/*",
       "/post/*",

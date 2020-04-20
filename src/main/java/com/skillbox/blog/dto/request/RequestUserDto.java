@@ -15,8 +15,10 @@ public class RequestUserDto {
   @Email
   @JsonProperty("e_mail")
   private String email;
+  private String name;
   @Size(min = 6)
   private String password;
-  @Size(min = 6)
   private String captcha;
+  @JsonProperty("captcha_secret")
+  private String captchaSecret;
 }

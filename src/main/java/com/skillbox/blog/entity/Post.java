@@ -68,4 +68,8 @@ public class Post {
       inverseJoinColumns = {@JoinColumn(name = "tag_id")}
   )
   private List<Tag> tagList;
+
+  public void addUserView() {
+    setViewCount(getViewCount() + 1);
+  }
 }
