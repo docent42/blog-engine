@@ -28,8 +28,8 @@ public class PostController {
   @GetMapping("/post")
   @ResponseStatus(HttpStatus.OK)
   public ResponseAllPostsDto getPosts(@RequestParam int offset,
-                                      @RequestParam int limit,
-                                      @RequestParam String mode) {
+      @RequestParam int limit,
+      @RequestParam String mode) {
     return postService.getPosts(offset, limit, mode);
   }
 
@@ -51,16 +51,16 @@ public class PostController {
   @GetMapping("/post/byDate")
   @ResponseStatus(HttpStatus.OK)
   public ResponseAllPostsDto getPostsByDate(@RequestParam int offset,
-                                            @RequestParam int limit,
-                                            @RequestParam String date) {
+      @RequestParam int limit,
+      @RequestParam String date) {
     return postService.getPostsByDate(offset, limit, date);
   }
 
   @GetMapping("/post/byTag")
   @ResponseStatus(HttpStatus.OK)
   public ResponseAllPostsDto getPostsByTag(@RequestParam int offset,
-                                           @RequestParam int limit,
-                                           @RequestParam(value = "tag") String tag) {
+      @RequestParam int limit,
+      @RequestParam(value = "tag") String tag) {
     return postService.getPostsByTag(offset, limit, tag);
   }
 

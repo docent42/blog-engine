@@ -12,5 +12,5 @@ public class ResponseInitDto {
   final String phone = "+7 495 720 25 17";
   final String email = "deal@symbioway.ru";
   final String copyright = "Даниил Пилипенко";
-  final String copyrightFrom = "2020";
+  final String copyrightFrom = "2019";
 }

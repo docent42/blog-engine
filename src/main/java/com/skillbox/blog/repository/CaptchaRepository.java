@@ -7,6 +7,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface CaptchaRepository extends JpaRepository<CaptchaCode, Long> {
 
-  @Query("SELECT c.secretCode FROM CaptchaCode c WHERE c.code = :code")
-  String findCaptchaCodeByCode(@Param("code") String code);
+  @Query("SELECT c.code FROM CaptchaCode c WHERE c.secretCode = :secret")
+  String findCaptchaCodeBySecret(@Param("secret") String secret);
 }

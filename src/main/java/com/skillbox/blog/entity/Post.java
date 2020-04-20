@@ -1,5 +1,6 @@
 package com.skillbox.blog.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.skillbox.blog.entity.enums.ModerationStatus;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,6 +51,7 @@ public class Post {
   private User userId;
 
   @Column(columnDefinition = "TIMESTAMP", nullable = false)
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
   private LocalDateTime time;
 
   @Column(nullable = false)
@@ -68,4 +70,8 @@ public class Post {
       inverseJoinColumns = {@JoinColumn(name = "tag_id")}
   )
   private List<Tag> tagList;
+
+  public void addUserView() {
+    setViewCount(getViewCount() + 1);
+  }
 }

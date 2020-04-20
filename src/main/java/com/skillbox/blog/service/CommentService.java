@@ -34,8 +34,15 @@ public class CommentService {
     commentToSave.setText(comment.getText());
     commentToSave.setUserId(userService.getCurrentUser());
 
-    if (comment.getParentId() != 0) {
-      PostComment parent = postCommentRepository.findById(comment.getParentId())
+    int parentId;
+    if (comment.getParentId().isEmpty()) {
+      parentId = 0;
+    } else {
+      parentId = Integer.parseInt(comment.getParentId());
+    }
+
+    if (parentId != 0) {
+      PostComment parent = postCommentRepository.findById(parentId)
           .orElseThrow(EntityNotFoundException::new);
       commentToSave.setParentId(parent);
     }

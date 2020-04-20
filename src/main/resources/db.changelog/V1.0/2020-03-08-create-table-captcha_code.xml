@@ -12,7 +12,7 @@
 			<column name="code" type="VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="secret_code" type="TEXT">
+			<column name="secret_code" type="VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
 			<column name="time" type="TIMESTAMP">

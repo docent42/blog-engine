@@ -6,15 +6,15 @@ global-settings:
     -
       code: 'MULTIUSER_MODE'
       name: 'Многопользовательский режим'
-      value: 'no'
+      value: 'NO'
     -
       code: 'POST_PREMODERATION'
       name: 'Премодерация постов'
-      value: 'yes'
+      value: 'YES'
     -
       code: 'STATISTICS_IS_PUBLIC'
       name: 'Показывать всем статистику блога'
-      value: 'no'
+      value: 'YES'
 
 spring:
   output:

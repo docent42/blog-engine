@@ -18,9 +18,12 @@ public class ModerationService {
 
   public ResponseResults<Boolean> moderationPost(RequestModerationDto requestModerationDto) {
     Post post = postRepository.findById(requestModerationDto.getPostId()).get();
-
+    if (requestModerationDto.getDecision().toUpperCase().equals("ACCEPT")) {
+      requestModerationDto.setDecision("ACCEPTED");
+    }
     ModerationStatus moderationStatus = ModerationStatus
         .valueOf(requestModerationDto.getDecision().toUpperCase());
+    System.out.println("================ " + moderationStatus);
     post.setModerationStatus(moderationStatus);
 
     postRepository.save(post);
