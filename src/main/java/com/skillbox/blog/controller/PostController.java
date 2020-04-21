@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -96,5 +97,12 @@ public class PostController {
   public ResponseResults<Boolean> dislike(
       @RequestBody RequestLikeDislikeDto requestLikeDislikeDto) {
     return postService.dislike(requestLikeDislikeDto);
+  }
+
+  @PutMapping("/post/{postId}")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseResults<Boolean> editPost(@Valid @RequestBody RequestPost postToEdit,
+      @PathVariable int postId) {
+    return postService.editPost(postToEdit, postId);
   }
 }

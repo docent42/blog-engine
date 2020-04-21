@@ -27,11 +27,4 @@ public class CommentController {
   public ResponseResults<Integer> createComment(@Valid @RequestBody RequestCommentDto comment) {
     return commentService.createComment(comment);
   }
-
-  @PutMapping("/post/{postId}")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseResults<Boolean> editComment(@Valid @RequestBody RequestPost postToEdit,
-      @PathVariable int postId) {
-    return commentService.editComment(postToEdit, postId);
-  }
 }

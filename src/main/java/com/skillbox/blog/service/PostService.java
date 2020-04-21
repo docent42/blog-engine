@@ -253,6 +253,22 @@ public class PostService {
     return new ResponseResults<Boolean>().setResult(true);
   }
 
+  public ResponseResults<Boolean> editPost(RequestPost editPost, int postId) {
+    Post oldPost = getPostById(postId);
+    Post postToSave = requestMapper.mapEdit(editPost);
+    postToSave.setId(oldPost.getId());
+    postToSave.setUserId(oldPost.getUserId());
+    postToSave.setModeratorId(oldPost.getModeratorId());
+
+    if (userService.isModerator()) {
+      postToSave.setModerationStatus(oldPost.getModerationStatus());
+    }
+    postToSave.setTagList(updateTags(editPost.getTags()));
+
+    postRepository.save(postToSave);
+    return new ResponseResults<Boolean>().setResult(true);
+  }
+
   public ResponseResults<Boolean> like(RequestLikeDislikeDto requestLikeDislikeDto) {
     if (postRepository.findById(requestLikeDislikeDto.getPostId()).isPresent()) {
       User currentUser = userService.getCurrentUser();

@@ -48,19 +48,4 @@ public class CommentService {
     }
     return new ResponseResults<Integer>().setId(postCommentRepository.save(commentToSave).getId());
   }
-
-  public ResponseResults<Boolean> editComment(RequestPost editPost, int postId) {
-    Post oldPost = postService.getPostById(postId);
-    Post postToSave = requestMapper.mapEdit(editPost);
-    postToSave.setUserId(oldPost.getUserId());
-    postToSave.setModeratorId(oldPost.getModeratorId());
-
-    if (userService.isModerator()) {
-      postToSave.setModerationStatus(oldPost.getModerationStatus());
-    }
-    postToSave.setTagList(postService.updateTags(editPost.getTags()));
-
-    postRepository.save(postToSave);
-    return new ResponseResults<Boolean>().setResult(true);
-  }
 }

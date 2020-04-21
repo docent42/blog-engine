@@ -81,7 +81,8 @@ public interface PostRepository extends JpaRepository<Post, Integer>,
   List<Post> findMyPosts(int userId, int isActive, String moderationStatus, Pageable pageable);
 
   @Query(nativeQuery = true, value = "SELECT * FROM be.post WHERE is_active = 1 "
-      + "AND time <= NOW() AND moderation_status = 'ACCEPTED' AND text LIKE %:query%")
+      + "AND time <= NOW() AND moderation_status = 'ACCEPTED' "
+      + "AND text LIKE %:query% OR title LIKE %:query%")
   List<Post> findAllPostsByQuery(String query, Pageable pageable);
 
   @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM be.post WHERE is_active = 1 "
